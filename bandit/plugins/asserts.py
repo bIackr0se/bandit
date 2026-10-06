@@ -27,6 +27,9 @@ use assert statements in test cases.
     assert_used:
       skips: ['*_test.py', '*test_*.py']
 
+``skips`` is a list of glob patterns. A single pattern may also be given as a
+string.
+
 :Example:
 
 .. code-block:: none
@@ -68,7 +71,11 @@ def gen_config(name):
 @test.test_id("B101")
 @test.checks("Assert")
 def assert_used(context, config):
-    for skip in config.get("skips", []):
+    skips = config.get("skips", [])
+    if isinstance(skips, str):
+        skips = [skips]
+
+    for skip in skips:
         if fnmatch.fnmatch(context.filename, skip):
             return None
 

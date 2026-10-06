@@ -641,6 +641,24 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("assert.py", expect)
 
+        # a single pattern given as a string is one pattern, not a list of
+        # one-character patterns (where a "*" would match every file)
+        test._config = {"skips": "*_test.py"}
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+        }
+        self.check_example("assert.py", expect)
+
+        test._config = {
+            "skips": os.path.join(os.getcwd(), "examples", "assert.py")
+        }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
+        }
+        self.check_example("assert.py", expect)
+
         test._config = {}
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 0},
